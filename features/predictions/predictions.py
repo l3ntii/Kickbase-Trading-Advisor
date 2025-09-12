@@ -88,7 +88,7 @@ def join_current_market(token, league_id, today_df_results):
     bid_df["expiring_today"] = bid_df["hours_to_exp"] < diff
 
     # Drop rows where predicted_mv_target is less than 5000
-    bid_df = bid_df[bid_df["predicted_mv_target"] > 5000]
+    # bid_df = bid_df[bid_df["predicted_mv_target"] > 5000]
 
     # Sort by predicted_mv_target descending
     bid_df = bid_df.sort_values("predicted_mv_target", ascending=False)
