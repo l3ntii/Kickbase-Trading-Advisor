@@ -21,6 +21,11 @@ def calc_manager_budgets(token, league_id, league_start_date, start_budget):
 
     activities_df = pd.DataFrame(activities)
 
+    # -------- FIX: leere Aktivitäten abfangen --------
+    if activities_df.empty:
+        print("Info: Keine Aktivitäten gefunden – starte mit leerem Budget-Setup.")
+        return pd.DataFrame(columns=["User", "Budget", "Team Value", "Max Negative", "Available Budget"])
+
     # Bonuses
     total_login_bonus = sum(entry.get("data", {}).get("bn", 0) for entry in login_bonus)
 
@@ -62,18 +67,12 @@ def calc_manager_budgets(token, league_id, league_start_date, start_budget):
         perf_df["point_bonus"] = []
         perf_df["Team Value"] = []
 
-    # -------- FIX: Flexible Spaltenwahl für Buyer/Seller --------
+    # -------- FLEX: Buyer/Seller-Spalten robust erkennen --------
     buyer_cols = ["byr", "buyer", "buyerId", "byUserId", "actor"]
     seller_cols = ["slr", "seller", "sellerId", "toUserId"]
 
     buyer_col = next((c for c in buyer_cols if c in activities_df.columns), None)
     seller_col = next((c for c in seller_cols if c in activities_df.columns), None)
-
-    if buyer_col is None and seller_col is None:
-        raise KeyError(
-            f"Keine gültigen Buyer/Seller-Spalten gefunden. "
-            f"Vorhandene Spalten: {list(activities_df.columns)}"
-        )
 
     buyers = set(activities_df[buyer_col].dropna().unique()) if buyer_col else set()
     sellers = set(activities_df[seller_col].dropna().unique()) if seller_col else set()
