@@ -62,12 +62,29 @@ def calc_manager_budgets(token, league_id, league_start_date, start_budget):
         perf_df["point_bonus"] = []
         perf_df["Team Value"] = []
 
-    # Initial budgets from activities
-    budgets = {user: start_budget for user in set(activities_df["byr"].dropna().unique())
-                                          .union(set(activities_df["slr"].dropna().unique()))}
+    # -------- FIX: Flexible Spaltenwahl für Buyer/Seller --------
+    buyer_cols = ["byr", "buyer", "buyerId", "byUserId", "actor"]
+    seller_cols = ["slr", "seller", "sellerId", "toUserId"]
+
+    buyer_col = next((c for c in buyer_cols if c in activities_df.columns), None)
+    seller_col = next((c for c in seller_cols if c in activities_df.columns), None)
+
+    if buyer_col is None and seller_col is None:
+        raise KeyError(
+            f"Keine gültigen Buyer/Seller-Spalten gefunden. "
+            f"Vorhandene Spalten: {list(activities_df.columns)}"
+        )
+
+    buyers = set(activities_df[buyer_col].dropna().unique()) if buyer_col else set()
+    sellers = set(activities_df[seller_col].dropna().unique()) if seller_col else set()
+
+    # Initial budgets
+    budgets = {user: start_budget for user in buyers.union(sellers)}
 
     for _, row in activities_df.iterrows():
-        byr, slr, trp = row.get("byr"), row.get("slr"), row.get("trp", 0)
+        byr = row.get(buyer_col) if buyer_col else None
+        slr = row.get(seller_col) if seller_col else None
+        trp = row.get("trp", 0)
         try:
             if pd.isna(byr) and pd.notna(slr):
                 budgets[slr] += trp
