@@ -73,6 +73,8 @@ league_id = get_league_id(token, league_name)
 
 # Calculate (estimated) budgets of all managers in the league
 manager_budgets_df = calc_manager_budgets(token, league_id, league_start_date, start_budget)
+print("\n=== Manager Budgets (Shape:", manager_budgets_df.shape, ") ===")
+display(manager_budgets_df)
 print("\n=== Manager Budgets ===")
 display(manager_budgets_df)
 
