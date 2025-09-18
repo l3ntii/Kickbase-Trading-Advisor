@@ -23,7 +23,7 @@ def calc_manager_budgets(token, league_id, league_start_date, start_budget):
     print("\n--- DEBUG: activities_df Info ---")
     print("Spalten:", activities_df.columns.tolist())
         if not activities_df.empty:
-    print("Beispielzeile:", activities_df.iloc[0].to_dict())
+            print("Beispielzeile:", activities_df.iloc[0].to_dict())
         else:
     print("activities_df ist leer")
     print("--- END DEBUG ---\n")
