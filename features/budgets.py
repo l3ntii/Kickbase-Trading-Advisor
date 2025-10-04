@@ -20,13 +20,6 @@ def calc_manager_budgets(token, league_id, league_start_date, start_budget):
         raise RuntimeError(f"Failed to fetch activities: {e}")
 
     activities_df = pd.DataFrame(activities)
-    print("\n--- DEBUG: activities_df Info ---")
-    print("Spalten:", activities_df.columns.tolist())
-        if not activities_df.empty:
-            print("Beispielzeile:", activities_df.iloc[0].to_dict())
-        else:
-    print("activities_df ist leer")
-    print("--- END DEBUG ---\n")
 
     # -------- FIX: leere Aktivitäten abfangen --------
     if activities_df.empty:
